@@ -11,33 +11,45 @@ else
 echo "Uruchomiono skrypt kopiujacy zdjecia do archiwum"
 
 mkdir tymczasowe_archiwum
+
+cp ./$1/*.jpeg ./tymczasowe_archiwum
+cp ./$1/*.JPEG ./tymczasowe_archiwum
+cp ./$1/*.png ./tymczasowe_archiwum
+cp ./$1/*.PNG ./tymczasowe_archiwum
+
 cd tymczasowe_archiwum
 
-cp $1/*jpeg .
-cp $1/*JPEG .
-cp $1/*png .
-cp $1/*PNG .
+for file in *.PNG
+do
+    mv "$file" "${file%.PNG}.png"
+done
 
-for i in *.PNG;
-    do "$i" "$(basename "$file" .PNG).png"
-    done
+for file in *.JPEG
+do
+    mv "$file" "${file%.JPEG}.jpeg"
+done
 
-for j in *.JPEG;
-    do "$j" "$(basename "$file" .JPEG).jpeg"
-    done
-
-find *.png -name "* *" | while read;
-    do
+find ./*.png -name "* *" | while read;
+do
     mv "$REPLY" "${REPLY// /_}"
-    done
+done
 
-find *.jpeg -name "* *" | while read;
-    do
+find ./*.jpeg -name "* *" | while read;
+do
     mv "$REPLY" "${REPLY// /_}"
-    done
+done
 
-convert -resize $2 *.png
-convert -resize $2 *.jpeg
+for file in *.jpeg
+do
+    convert -resize $2 $file $file
+done
 
-tar -cf archiwum.tar *.jpeg *.png
+for file in *.png
+do
+    convert -resize $2 $file $file
+done
+
+cd ..
+tar -cf archiwum.tar ./$1/*.jpeg ./$1/*.png
+
 fi
